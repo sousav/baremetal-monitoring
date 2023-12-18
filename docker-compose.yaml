@@ -16,6 +16,7 @@ services:
       - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
       - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/password:/etc/grafana/password
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     networks:
       monitoring:
