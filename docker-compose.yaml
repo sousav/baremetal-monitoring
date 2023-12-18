@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    environment:
+      - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+    deploy:
+      replicas: 1
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.2
+
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    deploy:
+      replicas: 1
+    volumes:
+      - prometheus-data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alertmanager/alert.rules/alerts.rules.yml:/alertmanager/alert.rules/alerts.rules.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=365d'
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.3
+
+
+  node_exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    deploy:
+      replicas: 1
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.4
+
+
+  blackbox:
+    image: prom/blackbox-exporter
+    container_name: blackbox_exporter
+    deploy:
+      replicas: 1
+    volumes:
+      - ./blackbox:/config
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.5
+
+
+networks:
+  monitoring:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+
+
+volumes:
+  prometheus-data:
+  grafana-data:

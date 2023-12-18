@@ -1,0 +1,34 @@
+global:
+  scrape_interval:     15s
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    env: 'infrastructure'
+
+
+scrape_configs:
+
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node_exporter:9100']
+    scrape_interval: 5s
+
+
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: ([^,]*),(.*)
+        replacement: $1
+        target_label: __param_target
+      - source_labels: [__address__]
+        target_label: instance
+      - target_label: __address__
+        replacement: localhost:9115  # The blackbox exporter's real hostname:port.
+
+    static_configs:
+      - targets: 
+        - http://localhost:9090,prometheus
