@@ -11,7 +11,7 @@ Launch the containers
 docker compose up -d
 ```
 
-# Step 3
+## Step 3
 Add this config in your ~/.ssh/config
 
 ```
@@ -35,13 +35,13 @@ Host WS
 	LocalForward 9115 172.18.0.5:9115
 ```
 
-# Step 4
+## Step 4
 Open an ssh session to the machine
 ```
 ssh WS
 ```
 
-# Step 5
+## Step 5
 The differents dashboard are now accessible using localhost
 
 - [Grafana](http://localhost:3000/)
