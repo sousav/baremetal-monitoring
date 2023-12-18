@@ -3,15 +3,12 @@
 Grafana/Prometheus monitoring dashboard with NodeExporter and Blackbox data feeds
 
 ## Step 1
-Create the file ./grafana/password and type in your default admin session password
-
-## Step 2
 Launch the containers
 ```
 docker compose up -d
 ```
 
-## Step 3
+## Step 2
 Add this config in your ~/.ssh/config
 
 ```
@@ -20,7 +17,7 @@ Host WS
 	User root
 	IdentityFile ~/.ssh/id_rsa
 
-    # Port forwarding of internal docker subnetwork
+	# Port forwarding of internal docker subnetwork
 
 	# Grafana
 	LocalForward 3000 172.18.0.2:3000
@@ -35,16 +32,19 @@ Host WS
 	LocalForward 9115 172.18.0.5:9115
 ```
 
-## Step 4
+## Step 3
 Open an ssh session to the machine
 ```
 ssh WS
 ```
 
-## Step 5
+## Step 4
 The differents dashboard are now accessible using localhost
 
 - [Grafana](http://localhost:3000/)
 - [Prometheus](http://localhost:9090/)
 - [Node Exporter](http://localhost:9100/metrics)
 - [BlackBox](http://localhost:9115/metrics)
+
+## Step 5
+The default grafana credentials are admin/password, don't forget to change it
