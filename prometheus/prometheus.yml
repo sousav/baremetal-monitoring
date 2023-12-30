@@ -21,14 +21,13 @@ scrape_configs:
       module: [http_2xx]  # Look for a HTTP 200 response.
     relabel_configs:
       - source_labels: [__address__]
-        regex: ([^,]*),(.*)
-        replacement: $1
         target_label: __param_target
-      - source_labels: [__address__]
-        target_label: instance
-      - target_label: __address__
-        replacement: localhost:9115  # The blackbox exporter's real hostname:port.
-
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__ 
+        replacement: blackbox_exporter:9115
     static_configs:
       - targets: 
-        - http://localhost:9090,prometheus
+        - https://news.sousa-dev.com
+        - https://api-news.sousa-dev.com/healthcheck
+        - https://cors.sousa-dev.com
