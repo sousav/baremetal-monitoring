@@ -21,7 +21,6 @@ services:
       monitoring:
         ipv4_address: 172.18.0.2
 
-
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -39,16 +38,18 @@ services:
       monitoring:
         ipv4_address: 172.18.0.3
 
-
   node_exporter:
     image: prom/node-exporter
     container_name: node_exporter
     deploy:
       replicas: 1
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
     networks:
       monitoring:
         ipv4_address: 172.18.0.4
-
 
   blackbox:
     image: prom/blackbox-exporter
@@ -61,14 +62,12 @@ services:
       monitoring:
         ipv4_address: 172.18.0.5
 
-
 networks:
   monitoring:
     driver: bridge
     ipam:
       config:
         - subnet: 172.18.0.0/16
-
 
 volumes:
   prometheus-data:
