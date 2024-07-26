@@ -62,6 +62,43 @@ services:
       monitoring:
         ipv4_address: 172.18.0.5
 
+  caddy:
+    container_name: caddy
+    image: caddy
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+      - 2019:2019 # Metrics
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      # - feed-volume:/www/feed:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.6
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  cors:
+    container_name: cors
+    image: cors
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    build:
+      context: ./cors
+      dockerfile: ./dockerfile
+    volumes:
+      - cors-volume:/apps/cors
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.7
+
 networks:
   monitoring:
     driver: bridge
@@ -72,3 +109,6 @@ networks:
 volumes:
   prometheus-data:
   grafana-data:
+  caddy_data:
+  caddy_config:
+  cors-volume:

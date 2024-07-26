@@ -1,0 +1,22 @@
+{
+	servers {
+		metrics
+	}
+	admin :2019
+}
+
+news.sousa-dev.com {
+	reverse_proxy host.docker.internal:8081
+}
+
+api-news.sousa-dev.com {
+	reverse_proxy host.docker.internal:3042
+}
+
+ws-news.sousa-dev.com {
+	reverse_proxy host.docker.internal:3044
+}
+
+cors.sousa-dev.com {
+	reverse_proxy cors:9999
+}

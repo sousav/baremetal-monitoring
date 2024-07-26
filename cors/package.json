@@ -1,0 +1,17 @@
+{
+  "name": "cors",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.cjs",
+  "scripts": {
+    "start": "node index.cjs",
+    "start:dev": "node index.cjs",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors-anywhere": "^0.4.4",
+    "nodemon": "^3.0.1"
+  }
+}

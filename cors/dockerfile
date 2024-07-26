@@ -1,0 +1,74 @@
+#
+# 🧑‍💻 Development
+#
+FROM node:18-alpine as local
+
+# Add the missing shared libraries from the alpine base image
+RUN apk add --no-cache libc6-compat
+
+# Create app folder
+WORKDIR /apps/cors
+
+# Set to local environment
+ENV NODE_ENV local
+
+# Create non-root user for Docker
+RUN addgroup -S nodegroup -g 1001 && adduser -S nodeuser -u 1001 -G nodegroup
+
+# Copy source code into the app folder
+COPY --chown=nodeuser:nodegroup . .
+
+# Install dependencies
+RUN npm install
+
+# Set Docker as a non-root user
+USER nodeuser
+
+
+
+#
+# 🏡 Production Build
+#
+FROM node:18-alpine as build
+
+WORKDIR /apps/cors
+RUN apk add --no-cache libc6-compat
+
+# Set to production environment
+ENV NODE_ENV production
+ENV VITE_NEWS_ENV_NAME production
+
+# Re-create non-root user for Docker
+RUN addgroup -S nodegroup -g 1001 && adduser -S nodeuser -u 1001 -G nodegroup
+
+# Copy source code and nodes_modules into the app folder
+COPY --chown=nodeuser:nodegroup --from=local /apps/cors/node_modules ./node_modules
+COPY --chown=nodeuser:nodegroup . .
+
+# Set Docker as a non-root user
+USER nodeuser
+
+
+
+#
+# 🚀 Production Server
+#
+FROM node:18-alpine as prod
+
+WORKDIR /apps/cors
+RUN apk add --no-cache libc6-compat
+
+# Set to production environment
+ENV NODE_ENV production
+
+# Re-create non-root user for Docker
+RUN addgroup -S nodegroup -g 1001 && adduser -S nodeuser -u 1001 -G nodegroup
+
+# Copy only the necessary files
+COPY --chown=nodeuser:nodegroup --from=build /apps/cors/node_modules node_modules
+COPY --chown=nodeuser:nodegroup . .
+
+# Set Docker as non-root user
+USER nodeuser
+
+CMD ["node", "index.cjs"]

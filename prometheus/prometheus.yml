@@ -31,3 +31,8 @@ scrape_configs:
         - https://news.sousa-dev.com
         - https://api-news.sousa-dev.com/healthcheck
         - https://cors.sousa-dev.com
+      
+  - job_name: 'caddy'
+    static_configs:
+      - targets: ['caddy:2019']
+    scrape_interval: 5s
