@@ -7,6 +7,7 @@ services:
     container_name: grafana
     environment:
       - GF_PATHS_CONFIG=/etc/grafana/grafana.ini
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
     deploy:
       replicas: 1
     depends_on:
@@ -99,6 +100,41 @@ services:
       monitoring:
         ipv4_address: 172.18.0.7
 
+  loki:
+    image: grafana/loki
+    container_name: loki
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    user: "root"
+    command: -config.file=/etc/loki/loki.yaml
+    volumes:
+      - ./loki/loki.yaml:/etc/loki/loki.yaml
+      - loki-data:/tmp/loki
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.8
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib
+    container_name: otel-collector
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    volumes:
+      - ./opentelemetry/otel-collector.yaml:/etc/otelcol-contrib/config.yaml
+      # ports:
+      # - 1888:1888 # pprof extension
+      # - 8888:8888 # Prometheus metrics exposed by the Collector
+      # - 8889:8889 # Prometheus exporter metrics
+      # - 13133:13133 # health_check extension
+      # - 4317:4317 # OTLP gRPC receiver
+      # - 4318:4318 # OTLP http receiver
+      # - 55679:55679 # zpages extension
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.9
+
 networks:
   monitoring:
     driver: bridge
@@ -112,3 +148,4 @@ volumes:
   caddy_data:
   caddy_config:
   cors-volume:
+  loki-data:
