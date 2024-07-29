@@ -74,6 +74,140 @@
     },
     {
       "datasource": {
+        "type": "loki",
+        "uid": "P8E80F9AEF21F6940"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "level"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 97
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 238
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "attributes_context"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 170
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 15,
+        "x": 0,
+        "y": 1
+      },
+      "id": 264,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Time"
+          }
+        ]
+      },
+      "pluginVersion": "11.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "P8E80F9AEF21F6940"
+          },
+          "editorMode": "builder",
+          "expr": "{exporter=\"OTLP\"} | json",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Logs",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "source": "labels"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "includeByName": {
+              "Time": true,
+              "attributes_context": true,
+              "body": true,
+              "level": true
+            },
+            "indexByName": {
+              "Time": 0,
+              "attributes_context": 2,
+              "body": 3,
+              "level": 1
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
@@ -121,7 +255,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 0,
+        "x": 15,
         "y": 1
       },
       "id": 20,
@@ -201,7 +335,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 3,
+        "x": 18,
         "y": 1
       },
       "hideTimeOverride": false,
@@ -308,7 +442,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 6,
+        "x": 21,
         "y": 1
       },
       "id": 154,
@@ -390,8 +524,8 @@
       "gridPos": {
         "h": 2,
         "w": 2,
-        "x": 18,
-        "y": 1
+        "x": 15,
+        "y": 5
       },
       "id": 14,
       "maxDataPoints": 100,
@@ -434,13 +568,13 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "System uptime",
+      "description": "Total RAM",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 1,
+          "decimals": 0,
           "mappings": [
             {
               "options": {
@@ -465,18 +599,17 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "bytes"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 2,
-        "w": 4,
-        "x": 20,
-        "y": 1
+        "w": 2,
+        "x": 17,
+        "y": 5
       },
-      "hideTimeOverride": true,
-      "id": 15,
+      "id": 75,
       "maxDataPoints": 100,
       "options": {
         "colorMode": "none",
@@ -504,7 +637,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "node_time_seconds{instance=\"$node\",job=\"$job\"} - node_boot_time_seconds{instance=\"$node\",job=\"$job\"}",
+          "expr": "node_memory_MemTotal_bytes{instance=\"$node\",job=\"$job\"}",
           "instant": true,
           "intervalFactor": 1,
           "range": false,
@@ -512,7 +645,7 @@
           "step": 240
         }
       ],
-      "title": "Uptime",
+      "title": "RAM Total",
       "type": "stat"
     },
     {
@@ -562,8 +695,8 @@
       "gridPos": {
         "h": 2,
         "w": 2,
-        "x": 18,
-        "y": 3
+        "x": 19,
+        "y": 5
       },
       "id": 23,
       "maxDataPoints": 100,
@@ -611,13 +744,13 @@
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Total RAM",
+      "description": "System uptime",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
-          "decimals": 0,
+          "decimals": 1,
           "mappings": [
             {
               "options": {
@@ -642,17 +775,18 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 2,
-        "w": 2,
-        "x": 20,
-        "y": 3
+        "w": 3,
+        "x": 21,
+        "y": 5
       },
-      "id": 75,
+      "hideTimeOverride": true,
+      "id": 15,
       "maxDataPoints": 100,
       "options": {
         "colorMode": "none",
@@ -680,7 +814,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "node_memory_MemTotal_bytes{instance=\"$node\",job=\"$job\"}",
+          "expr": "node_time_seconds{instance=\"$node\",job=\"$job\"} - node_boot_time_seconds{instance=\"$node\",job=\"$job\"}",
           "instant": true,
           "intervalFactor": 1,
           "range": false,
@@ -688,92 +822,7 @@
           "step": 240
         }
       ],
-      "title": "RAM Total",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${datasource}"
-      },
-      "description": "Total SWAP",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 2,
-        "x": 22,
-        "y": 3
-      },
-      "id": 18,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.1.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "node_memory_SwapTotal_bytes{instance=\"$node\",job=\"$job\"}",
-          "instant": true,
-          "intervalFactor": 1,
-          "range": false,
-          "refId": "A",
-          "step": 240
-        }
-      ],
-      "title": "SWAP Total",
+      "title": "Uptime",
       "type": "stat"
     },
     {
@@ -786,7 +835,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 7
       },
       "id": 263,
       "panels": [],
@@ -990,7 +1039,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 6
+        "y": 8
       },
       "id": 3,
       "options": {
@@ -1499,7 +1548,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 6
+        "y": 8
       },
       "id": 24,
       "options": {
@@ -2066,7 +2115,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 20
       },
       "id": 74,
       "options": {
@@ -2179,7 +2228,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 20
       },
       "id": 152,
       "options": {
@@ -2213,7 +2262,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "",
+  "refresh": "5s",
   "revision": 1,
   "schemaVersion": 39,
   "tags": [
@@ -2354,6 +2403,6 @@
   "timezone": "browser",
   "title": "Overview",
   "uid": "rYdddlPWm",
-  "version": 7,
+  "version": 5,
   "weekStart": ""
 }
