@@ -135,6 +135,21 @@ services:
       monitoring:
         ipv4_address: 172.18.0.9
 
+  openvpn_exporter:
+    image: kumina/openvpn-exporter
+    container_name: openvpn_exporter
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+    command:
+      - '-openvpn.status_paths'
+      - '/etc/openvpn_exporter/server.status'
+    volumes:
+      - /var/log/openvpn/status.log:/etc/openvpn_exporter/server.status
+    networks:
+      monitoring:
+        ipv4_address: 172.18.0.10
+
 networks:
   monitoring:
     driver: bridge
